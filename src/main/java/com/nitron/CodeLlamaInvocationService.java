@@ -28,8 +28,9 @@ public class CodeLlamaInvocationService {
             System.out.println(cleanCode2);
             var cleanCode3 = code3.replaceAll("\n", "");
             System.out.println(cleanCode3);
-            //getEmbedRequest(cleanCode);
-            var chatPayload = getChatRequest(cleanCode1, cleanCode2, cleanCode3);
+            String cleanCode = cleanCode1.concat(cleanCode2).concat(cleanCode3);
+            var embeddings = getEmbedRequest(cleanCode);
+            var chatPayload = getChatRequest(cleanCode);
             var request = HttpRequest.newBuilder()
                     .uri(new URI("http://localhost:11434/api/chat"))
                     .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(chatPayload)))
@@ -43,8 +44,7 @@ public class CodeLlamaInvocationService {
         }
     }
 
-    private  ChatRequest getChatRequest(String cleanCode1, String cleanCode2, String cleanCode3) {
-        String cleanCode = cleanCode1.concat(cleanCode2).concat(cleanCode3);
+    private  ChatRequest getChatRequest(String cleanCode) {
         ChatMessage message = new ChatMessage("user", "which method throws UnsupportedOperationException " + cleanCode);
         return new ChatRequest("codellama", List.of(message), false);
     }
